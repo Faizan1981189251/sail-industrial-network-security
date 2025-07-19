@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+ <meta charset="utf-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1">
+ <title>SAIL Industrial Network Security - Anomaly Detection Dashboard</title>
+ <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+ <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+ <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/apexcharts@3.42.0/dist/apexcharts.css">
+ <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
+ <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+ <nav class="navbar navbar-expand-lg navbar-dark">
+ <div class="container">
+ <a class="navbar-brand" href="javascript:void(0)">
+ <i class="fas fa-shield-alt me-2"></i> SAIL Network Shield
+ </a>
+ <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+ <span class="navbar-toggler-icon"></span>
+ </button>
+ <div class="collapse navbar-collapse" id="navbarNav">
+ <ul class="navbar-nav ms-auto">
+ <li class="nav-item">
+ <a class="nav-link active" href="javascript:void(0)">Dashboard</a>
+ </li>
+ <li class="nav-item">
+ <a class="nav-link" href="javascript:void(0)">Reports</a>
+ </li>
+ <li class="nav-item">
+ <a class="nav-link" href="javascript:void(0)">Settings</a>
+ </li>
+ <li class="nav-item">
+ <a class="nav-link" href="javascript:void(0)">Help</a>
+ </li>
+ <li class="nav-item d-flex align-items-center ms-2">
+ <div class="form-check form-switch">
+ <input class="form-check-input" type="checkbox" id="themeToggleSwitch">
+ <label class="form-check-label text-light" for="themeToggleSwitch">Dark Mode</label>
+ </div>
+ </li>
+ </ul>
+ </div>
+ </div>
+ </nav>
+ <div class="container mt-4">
+ <div class="row">
+ <div class="col-md-12">
+ <div class="d-flex justify-content-between align-items-center mb-4">
+ <h2><i class="fas fa-tachometer-alt me-2"></i> AI-Powered Anomaly Detection</h2>
+ <div>
+ <span class="badge bg-primary me-2">SCADA Protection</span>
+ <span class="badge bg-secondary">Industry 4.0</span>
+ </div>
+ </div>
+ <!-- System Status Card -->
+ <div class="dashboard-card p-3 mb-4">
+ <div class="row align-items-center">
+ <div class="col-md-3">
+ <div class="system-status normal">
+ <i class="fas fa-check-circle me-2"></i> System Status: Normal
+ </div>
+ </div>
+ <div class="col-md-3">
+ <div class="d-flex align-items-center">
+ <div class="me-3"><i class="fas fa-network-wired text-primary"></i></div>
+ <div>
+ <div class="small text-muted">Active Connections</div>
+ <div class="fw-bold">128</div>
+ </div>
+ </div>
+ </div>
+ <div class="col-md-3">
+ <div class="d-flex align-items-center">
+ <div class="me-3"><i class="fas fa-exclamation-triangle text-warning"></i></div>
+ <div>
+ <div class="small text-muted">Anomalies (24h)</div>
+ <div class="fw-bold">3</div>
+ </div>
+ </div>
+ </div>
+ <div class="col-md-3">
+ <div class="d-flex align-items-center">
+ <div class="me-3"><i class="fas fa-shield-virus text-success"></i></div>
+ <div>
+ <div class="small text-muted">Threats Mitigated</div>
+ <div class="fw-bold">12</div>
+ </div>
+ </div>
+ </div>
+ </div>
+ </div>
+ </div>
+ </div>
+ <div class="row">
+ <div class="col-lg-9">
+ <div class="dashboard-card p-3">
+ <!-- Data Source Controls -->
+ <div class="row mb-4">
+ <div class="col-md-6">
+ <div class="upload-area">
+ <i class="fas fa-upload upload-icon"></i>
+ <h5>Upload Network Logs</h5>
+ <p class="small text-muted mb-2">Support for PCAP, Syslog, and CSV formats</p>
+ <input type="file" id="logFileUpload" class="d-none">
+ <label for="logFileUpload" class="btn btn-sm btn-outline-primary">Select File</label>
+ </div>
+ </div>
+ <div class="col-md-6">
+ <div class="card h-100">
+ <div class="card-body">
+ <h5>Live Monitoring</h5>
+ <p class="small text-muted mb-3">Connect to real-time network data sources</p>
+ <div class="form-check form-switch">
+ <input class="form-check-input" type="checkbox" id="liveMonitoringSwitch">
+ <label class="form-check-label" for="liveMonitoringSwitch">Enable Live Monitoring</label>
+ </div>
+ <button class="btn btn-sm btn-outline-secondary mt-2" id="configureSourcesBtn">
+ <i class="fas fa-cog me-1"></i> Configure Sources
+ </button>
+ </div>
+ </div>
+ </div>
+ </div>
+ <!-- Tabs for Main and Report View -->
+ <ul class="nav nav-tabs mb-3" id="viewTabs">
+ <li class="nav-item">
+ <a class="nav-link active" id="live-tab" data-bs-toggle="tab" href="#live-view">Live Monitoring</a>
+ </li>
+ <li class="nav-item">
+ <a class="nav-link" id="report-tab" data-bs-toggle="tab" href="#report-view">Historical Reports</a>
+ </li>
+ </ul>
+ <div class="tab-content">
+ <!-- Live Monitoring View -->
+ <div class="tab-pane fade show active" id="live-view">
+ <!-- Model Selection and Sensitivity -->
+ <div class="row mb-4">
+ <div class="col-md-8">
+ <div class="model-selector mb-3">
+ <label class="form-label fw-bold">AI Model Selection</label>
+ <div class="d-flex flex-wrap">
+ <div class="form-check me-4">
+ <input class="form-check-input" type="radio" name="aiModel" id="isolationForest" checked>
+ <label class="form-check-label" for="isolationForest">Isolation Forest</label>
+ </div>
+ <div class="form-check me-4">
+ <input class="form-check-input" type="radio" name="aiModel" id="autoencoder">
+ <label class="form-check-label" for="autoencoder">Autoencoder</label>
+ </div>
+ <div class="form-check me-4">
+ <input class="form-check-input" type="radio" name="aiModel" id="oneClassSvm">
+ <label class="form-check-label" for="oneClassSvm">One-Class SVM</label>
+ </div>
+ </div>
+ </div>
+ </div>
+ <div class="col-md-4">
+ <label class="form-label fw-bold">Detection Sensitivity</label>
+ <div class="form-check form-switch mt-2">
+ <input class="form-check-input" type="checkbox" id="autoCalibrationSwitch">
+ <label class="form-check-label" for="autoCalibrationSwitch">Automatic Threshold Calibration</label>
+ <i class="fas fa-question-circle text-muted" data-bs-toggle="tooltip" title="When enabled, system will automatically calibrate sensitivity based on your data. Requires 'label' column in CSV."></i>
+ </div>
+ <input type="range" class="form-range" min="1" max="10" value="5" id="sensitivitySlider">
+ <div class="d-flex justify-content-between">
+ <small>Low</small>
+ <small>Medium</small>
+ <small>High</small>
+ </div>
+ <button class="btn btn-primary mt-3" id="trainModelBtn">
+ <i class="fas fa-brain me-1"></i> Train Model
+ </button>
+ <div id="modelStatus" class="small text-danger mt-2">Model not trained</div>
+ </div>
+ </div>
+ <!-- Visualizations -->
+ <div class="row mb-4">
+ <!-- Time Series Chart -->
+ <div class="col-md-12 mb-4">
+ <div class="dashboard-card p-3">
+ <h5 class="card-title">Anomaly Score Timeline</h5>
+ <div class="chart-wrapper" id="timeSeriesChart">
+ <div class="loading-overlay">
+ <div class="spinner-border text-primary" role="status">
+ <span class="visually-hidden">Loading...</span>
+ </div>
+ </div>
+ </div>
+ </div>
+ </div>
+ 
+ <!-- Network Activity Heatmap -->
+ <div class="col-md-6 mb-4">
+ <div class="dashboard-card p-3">
+ <h5 class="card-title">Network Activity Heatmap</h5>
+ <div class="heatmap-wrapper" id="networkHeatmap">
+ <div class="loading-overlay">
+ <div class="spinner-border text-primary" role="status">
+ <span class="visually-hidden">Loading...</span>
+ </div>
+ </div>
+ </div>
+ </div>
+ </div>
+ 
+ <!-- Model Performance Chart -->
+ <div class="col-md-6 mb-4">
+ <div class="dashboard-card p-3">
+ <h5 class="card-title">Model Performance Metrics</h5>
+ <div class="chart-wrapper" id="performanceChart">
+ <div class="loading-overlay">
+ <div class="spinner-border text-primary" role="status">
+ <span class="visually-hidden">Loading...</span>
+ </div>
+ </div>
+ </div>
+ </div>
+ </div>
+ </div>
+ 
+ <!-- Log Viewer -->
+ <div class="dashboard-card p-3 mb-4">
+ <h5 class="card-title mb-3">Recent Network Logs</h5>
+ <div class="log-viewer" id="logViewer">
+ <div class="log-entry">
+ <span class="text-muted">[2025-04-10 08:12:23]</span> Connection established from 192.168.1.105:54238 to 192.168.1.1:443
+ </div>
+ <div class="log-entry">
+ <span class="text-muted">[2025-04-10 08:12:25]</span> DHCP request from MAC 00:1A:2B:3C:4D:5E
+ </div>
+ <div class="log-entry anomaly">
+ <span class="text-muted">[2025-04-10 08:12:30]</span> <span class="text-danger">[ANOMALY]</span> Unusual port scanning activity detected from 192.168.1.120
+ </div>
+ <div class="log-entry">
+ <span class="text-muted">[2025-04-10 08:12:35]</span> PLC communication on MODBUS protocol
+ </div>
+ <div class="log-entry">
+ <span class="text-muted">[2025-04-10 08:12:40]</span> Sensor data received from IoT device 192.168.1.45
+ </div>
+ </div>
+ </div>
+ </div>
+ 
+ <!-- Historical Reports View -->
+ <div class="tab-pane fade" id="report-view">
+ <div class="row mb-4">
+ <div class="col-md-12">
+ <div class="card">
+ <div class="card-body">
+ <h5 class="card-title">Historical Data Analysis</h5>
+ <div class="row mb-3">
+ <div class="col-md-5">
+ <label class="form-label">Start Date</label>
+ <input type="date" class="form-control" id="startDate">
+ </div>
+ <div class="col-md-5">
+ <label class="form-label">End Date</label>
+ <input type="date" class="form-control" id="endDate">
+ </div>
+ <div class="col-md-2 d-flex align-items-end">
+ <button class="btn btn-primary w-100" id="generateReportBtn">Generate</button>
+ </div>
+ </div>
+ <div id="reportContainer" class="mt-4">
+ <p class="text-center text-muted">Select a date range and generate a report to view historical anomaly data</p>
+ </div>
+ </div>
+ </div>
+ </div>
+ </div>
+ </div>
+ </div>
+ </div>
+ </div>
+ <!-- Sidebar -->
+ <div class="col-lg-3">
+ <!-- Alerts Configuration -->
+ <div class="sidebar p-3 mb-4">
+ <h5 class="mb-3">Alert Configuration</h5>
+ <div class="alert-settings">
+ <div class="mb-3">
+ <div class="form-check form-switch">
+ <input class="form-check-input" type="checkbox" id="inAppAlertsSwitch" checked>
+ <label class="form-check-label" for="inAppAlertsSwitch">In-App Alerts</label>
+ </div>
+ </div>
+ <div class="mb-3">
+ <div class="form-check form-switch">
+ <input class="form-check-input" type="checkbox" id="emailAlertsSwitch">
+ <label class="form-check-label" for="emailAlertsSwitch">Email Alerts</label>
+ </div>
+ <div class="mt-2" id="emailSettings" style="display: none;">
+ <input type="email" class="form-control form-control-sm" placeholder="Email address">
+ </div>
+ </div>
+ <div class="mb-3">
+ <div class="form-check form-switch">
+ <input class="form-check-input" type="checkbox" id="smsAlertsSwitch">
+ <label class="form-check-label" for="smsAlertsSwitch">SMS Alerts</label>
+ </div>
+ <div class="mt-2" id="smsSettings" style="display: none;">
+ <input type="tel" class="form-control form-control-sm" placeholder="Phone number">
+ </div>
+ </div>
+ <div class="alert alert-info">
+ <h5>About Automatic Calibration</h5>
+ <p>When enabled, automatic calibration will use the <code>label</code> column in your CSV data to optimize the sensitivity threshold.</p>
+ <ul>
+ <li>The <code>label</code> column should contain "1" for anomalies and "0" for normal records.</li>
+ <li>By default, a false-positive rate of up to 30% is considered acceptable for industrial security applications.</li>
+ <li>Calibration results are specific to each dataset and model combination.</li>
+ </ul>
+ </div>
+ <button class="btn btn-primary btn-sm w-100" id="saveAlertSettings">Save Settings</button>
+ </div>
+ </div>
+ <!-- Notification Feed -->
+ <div class="sidebar p-3 mb-4">
+ <div class="d-flex justify-content-between align-items-center mb-3">
+ <h5 class="mb-0">Recent Alerts</h5>
+ <span class="position-relative">
+ <i class="fas fa-bell"></i>
+ <span class="alert-badge">3</span>
+ </span>
+ </div>
+ <div class="notification-feed">
+ <div class="alert alert-danger p-2">
+ <small class="d-block"><strong>Critical Alert</strong> - 10 mins ago</small>
+ Unauthorized access attempt detected from external IP
+ </div>
+ <div class="alert alert-warning p-2">
+ <small class="d-block"><strong>Warning</strong> - 45 mins ago</small>
+ Unusual network traffic pattern on SCADA subnet
+ </div>
+ <div class="alert alert-warning p-2">
+ <small class="d-block"><strong>Warning</strong> - 2 hours ago</small>
+ Multiple failed login attempts on control system
+ </div>
+ <div class="alert alert-info p-2">
+ <small class="d-block"><strong>Info</strong> - 3 hours ago</small>
+ System update completed successfully
+ </div>
+ </div>
+ <a href="javascript:void(0)" class="btn btn-sm btn-outline-secondary w-100 mt-2">View All Alerts</a>
+ </div>
+ <!-- Session Data -->
+ <div class="sidebar p-3 mb-4">
+ <h5 class="mb-3">Current Session</h5>
+ <div class="mb-3">
+ <div class="d-flex justify-content-between">
+ <small class="text-muted">Logs Processed:</small>
+ <small id="logsProcessedCount">0</small>
+ </div>
+ </div>
+ <div class="mb-3">
+ <div class="d-flex justify-content-between">
+ <small class="text-muted">Anomalies Detected:</small>
+ <small id="anomaliesDetectedCount">0</small>
+ </div>
+ </div>
+ <div class="mb-3">
+ <div class="d-flex justify-content-between">
+ <small class="text-muted">Model Accuracy:</small>
+ <small id="modelAccuracy">96.4%</small>
+ </div>
+ </div>
+ <div class="mb-3">
+ <div class="d-flex justify-content-between">
+ <small class="text-muted">Session Duration:</small>
+ <small id="sessionDuration">00:32:15</small>
+ </div>
+ </div>
+ <button class="btn btn-sm btn-outline-danger w-100" id="resetSession">Reset Session</button>
+ </div>
+ </div>
+ </div>
+ </div>
+ <footer class="bg-light mt-5 py-3">
+ <div class="container">
+ <div class="row">
+ <div class="col-md-6">
+ <p class="mb-0">© 2025 SAIL AI-Powered Anomaly Detection</p>
+ </div>
+ <div class="col-md-6 text-md-end">
+ <small class="text-muted">Industry 4.0 Cybersecurity Initiative</small>
+ </div>
+ </div>
+ </div>
+ </footer>
+ <!-- Scripts -->
+ <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+ <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+ <script src="https://cdn.jsdelivr.net/npm/apexcharts@3.42.0/dist/apexcharts.min.js"></script>
+ <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
+ <script src="https://cdn.jsdelivr.net/npm/papaparse@5.3.2/papaparse.min.js"></script>
+ <script src="js/script.js"></script>
+</body>
+</html>
